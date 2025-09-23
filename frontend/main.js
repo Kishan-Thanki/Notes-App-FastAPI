@@ -1,0 +1,150 @@
+const API = "http://localhost:8000";
+
+const authDiv = document.getElementById('auth');
+const dashDiv = document.getElementById('dashboard');
+const notesList = document.getElementById('notesList');
+const profileDiv = document.getElementById('profile');
+const loginEmailInput = document.getElementById('loginEmail');
+const loginPasswordInput = document.getElementById('loginPassword');
+const noteTitleInput = document.getElementById('noteTitle');
+const noteContentInput = document.getElementById('noteContent');
+
+function showDashboard() {
+    authDiv.classList.add('hidden');
+    dashDiv.classList.remove('hidden');
+    fetchNotes();
+}
+
+function showAuth() {
+    authDiv.classList.remove('hidden');
+    dashDiv.classList.add('hidden');
+    notesList.innerHTML = '';
+    profileDiv.innerHTML = '';
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    showAuth();
+}
+
+document.getElementById('registerForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const res = await fetch(`${API}/register`, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (res.ok) {
+        alert('Registered successfully! Please login.');
+        e.target.reset();
+    } else {
+        const error = await res.json();
+        alert(`Registration failed: ${error.detail}`);
+    }
+};
+
+document.getElementById('loginForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const data = new URLSearchParams();
+    data.append('username', loginEmailInput.value);
+    data.append('password', loginPasswordInput.value);
+
+    const res = await fetch(`${API}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data
+    });
+
+    if (res.ok) {
+        const json = await res.json();
+        localStorage.setItem('token', json.access_token);
+        showDashboard();
+    } else {
+        alert('Login failed. Please check your email and password.');
+    }
+};
+
+document.getElementById('getProfileBtn').onclick = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return alert('Please login first!');
+
+    const res = await fetch(`${API}/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+        const user = await res.json();
+        const imagePath = user.profile_image_path.replace(/\\/g, '/');
+        profileDiv.innerHTML = `
+            <p><strong>Name:</strong> ${user.display_name}</p>
+            <img src="${API}/${imagePath}" alt="Profile Picture">
+        `;
+    } else {
+        alert('Failed to fetch profile.');
+    }
+};
+
+document.getElementById('noteForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/notes`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            title: noteTitleInput.value,
+            content: noteContentInput.value
+        })
+    });
+    if (res.ok) {
+        e.target.reset();
+        fetchNotes();
+    } else {
+        alert('Failed to add note.');
+    }
+};
+
+async function fetchNotes() {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/notes`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (res.status === 401) {
+        logout();
+        return;
+    }
+
+    if (res.ok) {
+        const notes = await res.json();
+        notesList.innerHTML = '';
+        notes.forEach(note => {
+            const div = document.createElement('div');
+            div.className = 'note';
+            div.innerHTML = `<b>${note.title}</b><br>${note.content}<button onclick="deleteNote('${note.id}')">Delete</button>`;
+            notesList.appendChild(div);
+        });
+    }
+}
+
+window.deleteNote = async function(id) {
+    if (!confirm('Are you sure you want to delete this note?')) return;
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${API}/notes/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+        fetchNotes();
+    } else {
+        alert('Failed to delete note.');
+    }
+}
+
+if (localStorage.getItem('token')) {
+    showDashboard();
+}
