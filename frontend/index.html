@@ -1,126 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Secure Notes App</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 2em;
-        background-color: #f4f4f9;
-        color: #333;
-      }
-      .hidden {
-        display: none;
-      }
-      .note {
-        border: 1px solid #ccc;
-        margin: 1em 0;
-        padding: 1em;
-        border-radius: 8px;
-        background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      h1,
-      h2 {
-        color: #5a5a5a;
-      }
-      input {
-        width: 95%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      button {
-        padding: 10px 15px;
-        border: none;
-        background-color: #007bff;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #0056b3;
-      }
-      #dashboard button {
-        margin-top: 10px;
-      }
-      .note button {
-        background-color: #dc3545;
-        float: right;
-      }
-      #profile img {
-        max-width: 150px;
-        border-radius: 8px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Secure Notes App</h1>
 
-    <div id="auth">
-      <h2>Register</h2>
-      <form id="registerForm" enctype="multipart/form-data">
-        <input
-          type="text"
-          name="display_name"
-          placeholder="Display Name"
-          required
-        />
-        <input type="email" name="email" placeholder="Email" required />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-        />
-        <label for="profile_image">Profile Image:</label>
-        <input type="file" name="profile_image" accept="image/*" required />
-        <button type="submit">Sign Up</button>
-      </form>
+<head>
+  <meta charset="UTF-8" />
+  <title>Secure Notes App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f4f4f9;
+      color: #333;
+    }
 
-      <h2>Verify Email</h2>
-      <form id="verifyForm">
-        <input type="email" id="verifyEmail" placeholder="Email" required />
-        <input type="text" id="verifyOtp" placeholder="6-digit OTP" required />
-        <button type="submit">Verify</button>
-      </form>
+    .hidden {
+      display: none;
+    }
 
-      <h2>Login</h2>
-      <form id="loginForm">
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="Email"
-          required
-        /><br />
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Password"
-          required
-        /><br />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    .note {
+      border: 1px solid #ccc;
+      margin: 1em 0;
+      padding: 1em;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-    <div id="dashboard" class="hidden">
-      <h2>Your Profile</h2>
-      <button id="getProfileBtn">Get My Profile Info</button>
-      <div id="profile"></div>
-      <hr />
+    h1,
+    h2 {
+      color: #5a5a5a;
+    }
 
-      <h2>My Notes</h2>
-      <form id="noteForm">
-        <input type="text" id="noteTitle" placeholder="Title" required />
-        <input type="text" id="noteContent" placeholder="Content" required />
-        <button type="submit">Add Note</button>
-      </form>
-      <div id="notesList"></div>
-      <button onclick="logout()">Logout</button>
-    </div>
+    input {
+      width: 95%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-    <script src="main.js"></script>
-  </body>
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #dashboard button {
+      margin-top: 10px;
+    }
+
+    .note button {
+      background-color: #dc3545;
+      float: right;
+    }
+
+    #profile img {
+      max-width: 150px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Secure Notes App</h1>
+
+  <div id="auth">
+    <h2>Register</h2>
+    <form id="registerForm" enctype="multipart/form-data">
+      <input type="text" name="display_name" placeholder="Display Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <label for="profile_image">Profile Image:</label>
+      <input type="file" name="profile_image" accept="image/*" required />
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <h2>Verify Email</h2>
+    <form id="verifyForm">
+      <input type="email" id="verifyEmail" placeholder="Email" required />
+      <input type="text" id="verifyOtp" placeholder="6-digit OTP" required />
+      <button type="submit">Verify</button>
+    </form>
+
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="email" id="loginEmail" placeholder="Email" required /><br />
+      <input type="password" id="loginPassword" placeholder="Password" required /><br />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <h2>Your Profile</h2>
+    <button id="getProfileBtn">Get My Profile Info</button>
+    <div id="profile"></div>
+    <hr />
+
+    <h2>My Notes</h2>
+    <form id="noteForm">
+      <input type="text" id="noteTitle" placeholder="Title" required />
+      <input type="text" id="noteContent" placeholder="Content" required />
+      <button type="submit">Add Note</button>
+    </form>
+    <div id="notesList"></div>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+
 </html>

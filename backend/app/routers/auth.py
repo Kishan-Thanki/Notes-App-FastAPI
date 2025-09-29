@@ -20,9 +20,7 @@ async def register(
     password: Optional[str] = Form(None),
     profile_image: Optional[UploadFile] = File(None),
 ):
-    # Support both JSON and multipart/form-data (legacy frontend)
     if request.headers.get("content-type", "").startswith("multipart/form-data"):
-        # Support various field names coming from legacy/new forms
         username = username_form or username or display_name
         email = email_form or email
         password = password_form or password
@@ -48,6 +46,13 @@ async def register(
         "hashed_password": get_password_hash(password),
         "is_verified": False,
     }
+
+    if profile_image:
+        contents = await profile_image.read()
+        filename = f"{username}_{profile_image.filename}"
+        with open(f"static/images/{filename}", "wb") as f:
+            f.write(contents)
+        new_user["profile_image"] = filename
 
     await users_collection.insert_one(new_user)
 
@@ -102,4 +107,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @router.get("/profile")
 async def get_profile(current_user: dict = Depends(get_current_user)):
-    return utility.sanitize_document(current_user)
+    profile = utility.sanitize_document(current_user)
+    if "profile_image" in profile:
+        profile["profile_image_url"] = f"/static/images/{profile['profile_image']}"
+    return profile

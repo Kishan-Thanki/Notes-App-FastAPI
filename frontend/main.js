@@ -154,7 +154,7 @@ async function fetchNotes() {
     }
 }
 
-window.deleteNote = async function(id) {
+window.deleteNote = async function (id) {
     if (!confirm('Are you sure you want to delete this note?')) return;
     const token = localStorage.getItem('token');
     const res = await fetch(`${API}/notes/${id}`, {
@@ -166,6 +166,15 @@ window.deleteNote = async function(id) {
     } else {
         alert('Failed to delete note.');
     }
+}
+
+function renderProfile(profile) {
+    let html = `<p><b>Username:</b> ${profile.username}</p>
+                <p><b>Email:</b> ${profile.email}</p>`;
+    if (profile.profile_image_url) {
+        html += `<img src="${profile.profile_image_url}" alt="Profile Image" />`;
+    }
+    document.getElementById('profile').innerHTML = html;
 }
 
 if (localStorage.getItem('token')) {
