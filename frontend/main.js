@@ -8,6 +8,8 @@ const loginEmailInput = document.getElementById('loginEmail');
 const loginPasswordInput = document.getElementById('loginPassword');
 const noteTitleInput = document.getElementById('noteTitle');
 const noteContentInput = document.getElementById('noteContent');
+const verifyEmailInput = document.getElementById('verifyEmail');
+const verifyOtpInput = document.getElementById('verifyOtp');
 
 function showDashboard() {
     authDiv.classList.add('hidden');
@@ -37,11 +39,32 @@ document.getElementById('registerForm').onsubmit = async (e) => {
     });
 
     if (res.ok) {
-        alert('Registered successfully! Please login.');
+        alert('Registered! OTP printed in server console. Verify your email below.');
+        verifyEmailInput.value = formData.get('email');
         e.target.reset();
     } else {
         const error = await res.json();
         alert(`Registration failed: ${error.detail}`);
+    }
+};
+
+document.getElementById('verifyForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const res = await fetch(`${API}/verify-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: verifyEmailInput.value,
+            otp: verifyOtpInput.value
+        })
+    });
+
+    if (res.ok) {
+        alert('Email verified! You can now log in.');
+        e.target.reset();
+    } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Verification failed: ${err.detail || res.status}`);
     }
 };
 
@@ -76,10 +99,10 @@ document.getElementById('getProfileBtn').onclick = async () => {
 
     if (res.ok) {
         const user = await res.json();
-        const imagePath = user.profile_image_path.replace(/\\/g, '/');
         profileDiv.innerHTML = `
-            <p><strong>Name:</strong> ${user.display_name}</p>
-            <img src="${API}/${imagePath}" alt="Profile Picture">
+            <p><strong>Username:</strong> ${user.username}</p>
+            <p><strong>Email:</strong> ${user.email}</p>
+            <p><strong>Verified:</strong> ${user.is_verified ? 'Yes' : 'No'}</p>
         `;
     } else {
         alert('Failed to fetch profile.');

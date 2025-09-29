@@ -26,14 +26,21 @@ class NoteInDB(MongoModel, NoteBase):
     owner_email: EmailStr
 
 class UserCreate(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
-    password: str
-    display_name: str
+    password: str = Field(..., min_length=8, max_length=72)
 
 class UserInDB(MongoModel):
+    username: str
     email: EmailStr
-    display_name: str
+    hashed_password: str
+    is_verified: bool = False
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class VerifyEmailRequest(BaseModel):
+    email: EmailStr
+    otp: str = Field(..., min_length=6, max_length=6)

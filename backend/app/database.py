@@ -10,5 +10,6 @@ db = client.notesdb
 
 users_collection = db.users
 notes_collection = db.notes
+otps_collection = db.otps
 
 print("Successfully connected to MongoDB with motor!")
