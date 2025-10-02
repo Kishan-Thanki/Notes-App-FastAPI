@@ -1,7 +1,7 @@
 import os
 from typing import Optional
 from jose import jwt, JWTError
-from .database import users_collection
+from database import users_collection
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status

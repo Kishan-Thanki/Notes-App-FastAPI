@@ -1,7 +1,7 @@
-from .. import schemas
+import schemas
 from bson import ObjectId
-from .auth import get_current_user 
-from ..database import notes_collection
+from database import notes_collection
+from routers.auth import get_current_user 
 from fastapi import APIRouter, HTTPException, status, Depends
 
 router = APIRouter(prefix="/notes", tags=["Notes"])

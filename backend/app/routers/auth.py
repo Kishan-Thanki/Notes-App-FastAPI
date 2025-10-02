@@ -1,10 +1,12 @@
+import schemas
+import utility
 from typing import Optional
 from datetime import datetime, timedelta
-from .. import schemas, utility
-from ..database import users_collection, otps_collection
+from database import users_collection, otps_collection
 from fastapi.security import OAuth2PasswordRequestForm
+from security import verify_password, create_access_token, get_current_user, get_password_hash
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Form, File, UploadFile
-from ..security import verify_password, create_access_token, get_current_user, get_password_hash
+from security import verify_password, create_access_token, get_current_user, get_password_hash
 
 router = APIRouter(tags=["Authentication"])
 

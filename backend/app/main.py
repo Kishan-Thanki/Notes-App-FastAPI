@@ -1,10 +1,13 @@
+from pathlib import Path
 from fastapi import FastAPI
-from .routers import auth, notes
+from routers import auth, notes
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
+STATIC_DIR = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 origins = [
     "*"
